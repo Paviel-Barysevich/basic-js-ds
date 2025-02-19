@@ -68,9 +68,47 @@ class BinarySearchTree {
     }
   }
 
-  remove(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  remove(data) {
+    this.rootNode = removeNodeInTree(this.rootNode, data);
+
+    function removeNodeInTree(node, data) {
+      if (!node) {
+        return null;
+      }
+
+      if (data < node.data) {
+        node.left = removeNodeInTree(node.left, data);
+        return node;
+      } else if (data > node.data) {
+        node.right = removeNodeInTree(node.right, data);
+        return node;
+      } else {
+        if (!node.left && !node.right) {
+          return null
+        }
+
+        if (!node.left) {
+          node = node.right;
+          return node;
+        }
+
+        if (!node.right) {
+          node = node.left;
+          return node;
+        }
+
+        let maxFromLeftNode = node.left;
+        while (maxFromLeftNode.right) {
+          maxFromLeftNode = maxFromLeftNode.right;
+        }
+
+        node.data = maxFromLeftNode.data;
+
+        node.left = removeNodeInTree(node.left, maxFromLeftNode.data);
+
+        return node;
+      }
+    }
   }
 
   min() {
