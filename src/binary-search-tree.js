@@ -6,39 +6,198 @@ const { NotImplementedError } = require('../lib/errors');
 * using Node from extensions
 */
 class BinarySearchTree {
+  constructor() {
+    this.leave = {
+      data: null,
+      left: null,
+      right: null
+    };
+    this.binaryTree = {};
+  }
+
   root() {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+    if (this.binaryTree.hasOwnProperty('data')) {
+      return this.binaryTree;
+    }
+
+    return null
   }
 
-  add(/* data */) {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+  add(data) {
+    const insertDataToNode = (data, node) => {
+      if (data > node.data) {
+        node.right = { ...this.leave };
+        node.right.data = data;
+      } else if (data < node.data) {
+        node.left = { ...this.leave };
+        node.left.data = data;
+      }
+    }
+
+    if (!this.binaryTree.hasOwnProperty('data')) {
+      this.binaryTree = { ...this.leave };
+      this.binaryTree.data = data;
+
+      return this;
+    }
+
+    if (data !== this.binaryTree.data) {
+      const node = this.searchMatchingLeave(data, this.binaryTree);
+
+      insertDataToNode(data, node);
+    }
+
+    return this;
   }
 
-  find(/* data */) {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+  find(data) {
+    if (this.binaryTree.hasOwnProperty('data')) {
+      const node = this.findNode(data, this.binaryTree);
+
+      return node;
+    }
+
+    return null;
   }
 
-  has(/* data */) {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+  findNode(data, node) {
+    if (data === node.data) {
+      return node;
+    } else if (data > node.data) {
+      node = node.right ? this.findNode(data, node.right) : null;
+
+      return node;
+    }
+
+    node = node.left ? this.findNode(data, node.left) : null;
+
+    return node;
   }
 
-  remove(/* data */) {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+  has(data) {
+    return this.find(data) !== null;
+  }
+
+  remove(data) {
+    const findParentNode = (data, tree, parent = null) => {
+      if (tree.data === data) {
+        return parent;
+      }
+
+      if (tree.data > data) {
+        if (tree.left) {
+          return findParentNode(data, tree.left, tree);
+        }
+      }
+
+      if (tree.right) {
+        return findParentNode(data, tree.right, tree);
+      }
+
+      return null;
+    };
+
+    if (this.has(data)) {
+      const node = this.findNode(data, this.binaryTree);
+      const parentNode = findParentNode(data, this.binaryTree, this.binaryTree);
+
+      if (node.right === null && node.left === null) {
+        if (parentNode.left === node) {
+          parentNode.left = null;
+          return this;
+        }
+
+        if (parentNode.right === node) {
+          parentNode.right = null;
+          return this;
+        }
+
+        return this;
+      }
+
+      if (node.right === null) {
+        if (parentNode.left === node) {
+          parentNode.left.data = node.left.data;
+          parentNode.left.left = node.left.left;
+          parentNode.left.right = node.left.right;
+        }
+
+        if (parentNode.right === node) {
+          parentNode.right.data = node.left.data;
+          parentNode.right.left = node.left.left;
+          parentNode.right.right = node.left.right;
+        }
+
+        return this;
+      }
+
+      if (node.left === null) {
+        if (parentNode.left === node) {
+          parentNode.left.data = node.right.data;
+          parentNode.left.left = node.right.left;
+          parentNode.left.right = node.right.right;
+        }
+
+        if (parentNode.right === node) {
+          parentNode.right.data = node.right.data;
+          parentNode.right.left = node.right.left;
+          parentNode.right.right = node.right.right;
+        }
+
+        return this;
+      }
+
+      let veryLeftNode = node.right;
+
+      if (veryLeftNode) {
+        while (veryLeftNode.left) {
+          veryLeftNode = veryLeftNode.left;
+        }
+      }
+
+      const veryLeftNodeData = veryLeftNode.data;
+
+      this.remove(veryLeftNodeData);
+      node.data = veryLeftNodeData;
+    }
+
+    return this;
   }
 
   min() {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+    let leftNode = this.binaryTree.left || null;
+
+    if (leftNode) {
+      while (leftNode.left) {
+        leftNode = leftNode.left;
+      }
+    }
+
+    return leftNode?.data;
   }
 
   max() {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+    let rightNode = this.binaryTree.right || null;
+
+    if (rightNode) {
+      while (rightNode.right) {
+        rightNode = rightNode.right;
+      }
+    }
+
+    return rightNode?.data;
+  }
+
+  searchMatchingLeave(data, node) {
+    if (data > node.data) {
+      node = node.right ? this.searchMatchingLeave(data, node.right) : node;
+
+      return node;
+    } else if (data < node.data) {
+      node = node.left ? this.searchMatchingLeave(data, node.left) : node;
+
+      return node;
+    }
   }
 }
 
