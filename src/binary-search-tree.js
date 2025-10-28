@@ -165,24 +165,20 @@ class BinarySearchTree {
   }
 
   min() {
-    let leftNode = this.binaryTree.left || null;
+    let leftNode = this.binaryTree.left;
 
-    if (leftNode) {
-      while (leftNode.left) {
-        leftNode = leftNode.left;
-      }
+    while (leftNode.left) {
+      leftNode = leftNode.left;
     }
 
     return leftNode?.data;
   }
 
   max() {
-    let rightNode = this.binaryTree.right || null;
+    let rightNode = this.binaryTree.right;
 
-    if (rightNode) {
-      while (rightNode.right) {
-        rightNode = rightNode.right;
-      }
+    while (rightNode.right) {
+      rightNode = rightNode.right;
     }
 
     return rightNode?.data;
